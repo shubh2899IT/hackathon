@@ -1,0 +1,8 @@
+#v-pills-inbox{
+overflow-y: scroll;
+height: 480px;
+}
+
+#v-pills-tabContent{
+    width: 100%;
+}

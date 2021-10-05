@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GmailClone</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+    integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body>
+
+
+  <!--Add buttons to initiate auth sequence and sign out-->
+
+  <pre id="content" style="white-space: pre-wrap;display: none;"></pre>
+
+  <div class="container-fluid">
+    <nav class="navbar mt-4 navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <!-- <img src="/docs/5.0/assets/brand/bootstrap-logo.svg" alt="" width="30" height="24"
+            class="d-inline-block align-text-top"> -->
+          <i class="fas fa-envelope"></i>
+          GmailClone
+        </a>
+
+        <label class="badge bg-primary" id='username'></label>
+        <button class='btn btn-sm btn-primary' id="authorize_button" style="display: none"><i
+            class="fab fa-google-plus-g pr-1"></i> SIGN
+          IN</button>
+        <button class='btn btn-sm btn-danger' id="signout_button" style="display: none">Sign Out</button>
+
+      </div>
+    </nav>
+    <br>
+    <div class="d-flex align-items-start">
+      <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home"
+          type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
+          Home
+        </button>
+        <button class="nav-link" id="v-pills-inbox-tab" data-bs-toggle="pill" data-bs-target="#v-pills-inbox"
+          type="button" role="tab" aria-controls="v-pills-inbox" aria-selected="false" onclick="displayInbox()">
+          Inbox
+        </button>
+        <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages"
+          type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+          Compose Email
+        </button>
+        <button class="nav-link" id="v-pills-draft-tab" data-bs-toggle="pill" data-bs-target="#v-pills-draft"
+          type="button" role="tab" aria-controls="v-pills-draft" aria-selected="false" onclick="displayDraft()">
+          Draft
+        </button>
+        <button class="nav-link" id="v-pills-outbox-tab" data-bs-toggle="pill" data-bs-target="#v-pills-outbox"
+          type="button" role="tab" aria-controls="v-pills-outbox" aria-selected="false" onclick="displayOutbox()">
+          Outbox
+        </button>
+      </div>
+      <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+          <img src="back.jpg" class="img-fluid" alt="GmailClone">
+        </div>
+        <div class="tab-pane fade" id="v-pills-inbox" role="tabpanel" aria-labelledby="v-pills-inbox-tab">
+          <table class="table w-100">
+            <thead class="table-dark">
+              <th>Sender</th>
+              <th>Email</th>
+              <th>Time</th>
+            </thead>
+            <tbody id="inbox_table">
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+          <div class="row">
+            <div class="col">
+
+              <div class="card">
+                <div class="card-header">
+                  <i class="fas fa-plus-square" style="color:orange" ; font-weight: bolder;"></i> Compose
+                </div>
+                <div class="card-body">
+                  <form class="form" id="composeform" action="javascript:sendEmail()">
+                    <p class="card-text">
+
+                    <div class="input-group">
+
+                      <span class="input-group-text">To</span>
+                      <input type="email" aria-label="To" id="mailto" class="form-control">
+
+                    </div>
+                    <br>
+                    <div class="input-group">
+                      <span class="input-group-text">Subject</span>
+                      <input type="text" aria-label="Subject" id="mailsubject" class="form-control">
+                    </div>
+                    <br>
+                    <textarea maxlength="256" style="resize: none;" id="mailbody" class="form-control"
+                      aria-label="With textarea" placeholder="Body"></textarea>
+
+                    <div class="card-footer">
+                      <button class="btn btn-sm btn-primary" type="submit">Send <i
+                          class="fas fa-paper-plane"></i></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="container-fluid" style="display:none" id="output_message">
+              <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+              </svg>
+              <div class="alert alert-success d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div>
+                  <b>Successfully sent</b>
+                </div>
+              </div>
+            </div>
+
+
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="v-pills-draft" role="tabpanel" aria-labelledby="v-pills-draft-tab">
+          <table class="table w-100">
+            <thead class="table-dark">
+              <th>Sender</th>
+              <th>Email</th>
+              <th>Time</th>
+            </thead>
+            <tbody id="draft_table">
+
+            </tbody>
+          </table>
+
+        </div>
+        <div class="tab-pane fade" id="v-pills-outbox" role="tabpanel" aria-labelledby="v-pills-outbox-tab">
+          <table class="table w-100">
+            <thead class="table-dark">
+              <th>Sender</th>
+              <th>Email</th>
+              <th>Time</th>
+            </thead>
+            <tbody id="outbox_table">
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // Client ID and API key from the Developer Console
+    var CLIENT_ID =
+      "6578353436-q7fee1s0t84g51vl560v2ckti4b9a9qg.apps.googleusercontent.com";
+    var API_KEY = "AIzaSyD_l_qzy--p1eeJw4dbYSXxmcTEuFOlolo";
+
+    // Array of API discovery doc URLs for APIs used by the quickstart
+    var DISCOVERY_DOCS = [
+      "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
+    ];
+
+    // Authorization scopes required by the API; multiple scopes can be
+    // included, separated by spaces.
+    var SCOPES = "https://mail.google.com/";
+
+    var authorizeButton = document.getElementById("authorize_button");
+    var signoutButton = document.getElementById("signout_button");
+
+    /**
+     *  On load, called to load the auth2 library and API client library.
+     */
+    function handleClientLoad() {
+      gapi.load("client:auth2", initClient);
+    }
+
+    function getUsername() {
+      var userRequest = gapi.client.gmail.users.getProfile({
+        'userId': 'me'
+      })
+
+      userRequest.execute(function (response) {
+        document.getElementById('username').innerHTML = response.emailAddress;
+      })
+    }
+
+    /**
+     *  Initializes the API client library and sets up sign-in state
+     *  listeners.
+     */
+    function initClient() {
+      gapi.client
+        .init({
+          apiKey: API_KEY,
+          clientId: CLIENT_ID,
+          discoveryDocs: DISCOVERY_DOCS,
+          scope: SCOPES,
+        })
+        .then(
+          function () {
+            // Listen for sign-in state changes.
+            gapi.auth2
+              .getAuthInstance()
+              .isSignedIn.listen(updateSigninStatus);
+
+            // Handle the initial sign-in state.
+            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+            authorizeButton.onclick = handleAuthClick;
+            signoutButton.onclick = handleSignoutClick;
+          },
+          function (error) {
+            appendPre(JSON.stringify(error, null, 2));
+          }
+        );
+    }
+
+    /**
+     *  Called when the signed in status changes, to update the UI
+     *  appropriately. After a sign-in, the API is called.
+     */
+    function updateSigninStatus(isSignedIn) {
+      if (isSignedIn) {
+        authorizeButton.style.display = "none";
+        signoutButton.style.display = "block";
+        getUsername();
+        listLabels();
+      } else {
+        authorizeButton.style.display = "block";
+        signoutButton.style.display = "none";
+      }
+    }
+
+    /**
+     *  Sign in the user upon button click.
+     */
+    function handleAuthClick(event) {
+      gapi.auth2.getAuthInstance().signIn();
+    }
+
+    /**
+     *  Sign out the user upon button click.
+     */
+    function handleSignoutClick(event) {
+      gapi.auth2.getAuthInstance().signOut();
+      document.getElementById("username").innerHTML="";
+    }
+
+    /**
+     * Append a pre element to the body containing the given message
+     * as its text node. Used to display the results of the API call.
+     *
+     * @param {string} message Text to be placed in pre element.
+     */
+    function appendPre(message) {
+      var pre = document.getElementById("content");
+      var textContent = document.createTextNode(message + "\n");
+      pre.appendChild(textContent);
+    }
+
+    /**
+     * Print all Labels in the authorized user's inbox. If no labels
+     * are found an appropriate message is printed.
+     */
+    function listLabels() {
+      gapi.client.gmail.users.labels
+        .list({
+          userId: "me",
+        })
+        .then(function (response) {
+          var labels = response.result.labels;
+          appendPre("Labels:");
+
+          if (labels && labels.length > 0) {
+            for (i = 0; i < labels.length; i++) {
+              var label = labels[i];
+              appendPre(label.name);
+            }
+          } else {
+            appendPre("No Labels found.");
+          }
+        });
+    }
+  </script>
+
+  <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+    onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
+  <script src="api-functions.js"></script>
+</body>
+
+</html>
